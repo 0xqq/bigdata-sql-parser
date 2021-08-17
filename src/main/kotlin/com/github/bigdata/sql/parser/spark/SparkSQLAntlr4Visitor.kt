@@ -469,7 +469,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
 
             statementData.limit = limit
             return StatementData(StatementType.SELECT, statementData)
-        } else if(StringUtils.equalsIgnoreCase("insert", ctx.start.text) || StringUtils.equalsIgnoreCase("with", ctx.start.text) {
+        } else if(StringUtils.equalsIgnoreCase("insert", ctx.start.text) || StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
             super.visitQuery(ctx.query())
 
             val tableContext = ctx.query().queryNoWith().getChild(0)
