@@ -2,7 +2,7 @@
 
 数据血缘，支持spark sql,presto sql,tidb sql, flink sql, Spark/flink jar 运行命令的血缘解析
 
-# build
+# 编译
 
 mvn antlr4:antlr4
 
