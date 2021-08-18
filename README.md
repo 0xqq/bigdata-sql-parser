@@ -32,7 +32,7 @@ println(statementData.statement)
 
 * Flink SQL
 ```kotlin
-        val sql = "CREATE SOURCE TABLE student_scores (\n" +
+val sql = "CREATE SOURCE TABLE student_scores (\n" +
         "  student_number varchar comment '学号', \n" +
         "  student_name varchar comment '姓名', \n" +
         "  subject varchar comment '学科',\n" +
