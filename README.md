@@ -5,6 +5,7 @@
 ##### build
 
 mvn antlr4:antlr4
+
 mvn clean package
 
 ##### 使用
