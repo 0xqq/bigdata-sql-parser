@@ -1,6 +1,6 @@
 # 介绍
 
-数据血缘解析器，支持spark sql,presto sql,tidb sql, flink sql, Spark/flink jar 运行命令的血缘解析
+数据血缘，支持spark sql,presto sql,tidb sql, flink sql, Spark/flink jar 运行命令的血缘解析
 
 # build
 
