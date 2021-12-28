@@ -4,6 +4,7 @@
 
 * 特别提示：presto和spark均支持with语法
 * 目前解析到表级别，可以扩展到字段级别
+* 支持datax mysql/pg/s3血缘
 
 # 编译
 
