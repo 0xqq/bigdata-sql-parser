@@ -33,15 +33,33 @@
         </dependency>
 
         <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.calcite.avatica</groupId>
+            <artifactId>avatica-core</artifactId>
+            <version>1.16.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.10</version>
         </dependency>
 
         <dependency>
-            <groupId>com.facebook.presto</groupId>
-            <artifactId>presto-parser</artifactId>
-            <version>0.259.1</version>
+            <groupId>io.trino</groupId>
+            <artifactId>trino-parser</artifactId>
+            <version>366</version>
         </dependency>
 
         <dependency>
@@ -64,6 +82,20 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <name>internal releases</name>
+            <url>http://maven.dev.longbridge-inc.com:8081/nexus/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>internal snapshot</name>
+            <url>http://maven.dev.longbridge-inc.com:8081/nexus/repository/maven-snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>

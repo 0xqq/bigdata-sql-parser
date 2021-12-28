@@ -1,0 +1,92 @@
+{
+  "job": {
+    "setting": {
+      "speed": {
+        "channel": 2
+      }
+    },
+    "content": [
+      {
+        "reader": {
+          "name": "mysqlreader",
+          "parameter": {
+            "username": "xx",
+            "password": "xx",
+            "column": [
+              "id","name"
+            ],
+            "splitPk": "id",
+            "connection": [
+              {
+                "table": [
+                  "table"
+                ],
+                "jdbcUrl": [
+                  "jdbc:postgresql://host:port/database"
+                ]
+              }
+            ]
+          }
+        },
+        "writer": {
+          "name": "s3writer",
+          "parameter": {
+            "bucket": "bitestduhanmin",
+            "path": "ods/flinkx/ww/pt=20200508/",
+            "fieldDelimiter": ",",
+            "compression":"SNAPPY",
+            "stored":"PARQUET",
+            "writeMode": "truncate",
+            "column":[
+              {
+                "name": "qw",
+                "type": "bigint"
+              },
+              {
+                "name": "qwqw",
+                "type": "bigint"
+              },
+              {
+                "name": "a",
+                "type": "string"
+              },
+              {
+                "name": "b",
+                "type": "string"
+              },
+              {
+                "name": "column_5",
+                "type": "decimal(10,2)"
+              }
+            ,
+              {
+                "name": "column_6",
+                "type": "decimal(10,4)"
+              }
+            ,
+              {
+                "name": "column_7",
+                "type": "string"
+              }
+            ,
+              {
+                "name": "column_8",
+                "type": "bigint"
+              }
+            ,
+              {
+                "name": "column_9",
+                "type": "bigint"
+              }
+            ,
+              {
+                "name": "column_10",
+                "type": "boolean"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

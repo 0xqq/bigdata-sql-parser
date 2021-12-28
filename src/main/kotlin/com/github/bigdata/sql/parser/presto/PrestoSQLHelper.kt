@@ -1,8 +1,8 @@
 package com.github.bigdata.sql.parser.presto
 
-import com.facebook.presto.sql.parser.ParsingOptions
-import com.facebook.presto.sql.parser.SqlParser
-import com.facebook.presto.sql.tree.*
+import io.trino.sql.parser.ParsingOptions
+import io.trino.sql.parser.SqlParser
+import io.trino.sql.tree.*
 import com.github.bigdata.sql.parser.StatementData
 import com.github.bigdata.sql.parser.StatementType
 import com.github.bigdata.sql.parser.TableData
