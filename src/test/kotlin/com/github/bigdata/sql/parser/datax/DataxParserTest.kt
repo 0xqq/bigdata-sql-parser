@@ -14,7 +14,7 @@ class DataxParserTest {
     fun run(path:String) {
         val json = readText(path)
         val statementData = DataxLHelper.getStatementData(json)
-        println(statementData.statement)
+        println(statementData)
     }
 
     @Test

@@ -38,7 +38,7 @@ object PrestoSQLHelper {
         val hashSet = HashSet(statementData.inputTables)
         statementData.inputTables.clear()
         statementData.inputTables.addAll(hashSet)
-        return StatementData(StatementType.UNKOWN, statementData)
+        return StatementData(StatementType.PRESTO, statementData)
     }
 
     private fun tableSource(str: String): TableSource {

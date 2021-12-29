@@ -65,6 +65,6 @@ object DataxLHelper {
         }
         tableSourceWriter?.let { statementData.outpuTables.add(it) }
 
-        return StatementData(StatementType.UNKOWN, statementData)
+        return StatementData(StatementType.DATAX, statementData)
     }
 }
