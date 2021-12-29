@@ -1,5 +1,6 @@
 package com.github.bigdata.sql.parser.datax
 
+import cn.hutool.json.JSONUtil
 import org.junit.Test
 
 /**
@@ -14,7 +15,7 @@ class DataxParserTest {
     fun run(path:String) {
         val json = readText(path)
         val statementData = DataxLHelper.getStatementData(json)
-        println(statementData)
+        println(JSONUtil.toJsonStr(statementData))
     }
 
     @Test
