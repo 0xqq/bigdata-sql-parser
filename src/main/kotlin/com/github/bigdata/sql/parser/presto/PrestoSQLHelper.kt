@@ -1,8 +1,11 @@
 package com.github.bigdata.sql.parser.presto
 
-import io.trino.sql.parser.ParsingOptions
-import io.trino.sql.parser.SqlParser
-import io.trino.sql.tree.*
+import com.facebook.presto.sql.parser.ParsingOptions
+import com.facebook.presto.sql.parser.SqlParser
+import com.facebook.presto.sql.tree.Insert
+import com.facebook.presto.sql.tree.Node
+import com.facebook.presto.sql.tree.QuerySpecification
+import com.facebook.presto.sql.tree.Table
 import com.github.bigdata.sql.parser.StatementData
 import com.github.bigdata.sql.parser.StatementType
 import com.github.bigdata.sql.parser.TableData
@@ -57,7 +60,7 @@ object PrestoSQLHelper {
         return tableSource
     }
 
-    private fun maxDepthLeaf(treeList: List<Node>,statement:TableData) {
+    private fun maxDepthLeaf(treeList: List<Node>, statement:TableData) {
         if (CollectionUtils.isNotEmpty(treeList)) {
             for (node in treeList) {
 

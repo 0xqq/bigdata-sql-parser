@@ -8,6 +8,8 @@ import com.github.bigdata.sql.parser.TableData
 import com.github.bigdata.sql.parser.TableSource
 import com.github.bigdata.sql.parser.datax.commons.DataxType
 import com.github.bigdata.sql.parser.datax.reader.DBReader
+import com.github.bigdata.sql.parser.datax.reader.S3Reader
+import com.github.bigdata.sql.parser.datax.writer.DBWriter
 import com.github.bigdata.sql.parser.datax.writer.S3Writer
 
 /**
@@ -41,23 +43,28 @@ object DataxLHelper {
 
         val statementData = TableData()
 
+        var tableSourceReader:TableSource? = null
         //拿到reader
         if (readerName.equals(DataxType.Reader.pg.code) || readerName.equals(DataxType.Reader.mysql.code)){
             val dbReader = DBReader(readerName,reader)
-            var tableSource = TableSource(dbReader.db, dbReader.table,null,dbReader.columns)
-            statementData.inputTables.add(tableSource)
+            tableSourceReader = TableSource(dbReader.connectors,dbReader.db, dbReader.table,null,dbReader.columns)
         }else if (readerName.equals(DataxType.Reader.s3.code)){
-
+            val s3Reader = S3Reader(readerName,reader)
+            tableSourceReader = TableSource(null,s3Reader.db, s3Reader.table,null,s3Reader.columns)
         }
+        tableSourceReader?.let { statementData.inputTables.add(it) }
 
+        var tableSourceWriter:TableSource? = null
         //拿到writer
         if (writerName.equals(DataxType.Writer.pg.code) || writerName.equals(DataxType.Writer.mysql.code)){
-
+            val dbWriter = DBWriter(writerName, writer)
+            tableSourceWriter = TableSource(dbWriter.connectors,dbWriter.db, dbWriter.table,null,dbWriter.columns)
         }else if (writerName.equals(DataxType.Writer.s3.code)){
             val s3Writer = S3Writer(writerName, writer)
-            var tableSource = TableSource(s3Writer.db, s3Writer.table,null,s3Writer.columns)
-            statementData.outpuTables.add(tableSource)
+            tableSourceWriter = TableSource(s3Writer.connectors,s3Writer.db, s3Writer.table,null,s3Writer.columns)
+
         }
+        tableSourceWriter?.let { statementData.outpuTables.add(it) }
 
         return StatementData(StatementType.UNKOWN, statementData)
     }

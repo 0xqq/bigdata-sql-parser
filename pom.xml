@@ -57,9 +57,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.trino</groupId>
-            <artifactId>trino-parser</artifactId>
-            <version>366</version>
+            <groupId>com.facebook.presto</groupId>
+            <artifactId>presto-parser</artifactId>
+            <version>0.259.1</version>
         </dependency>
 
         <dependency>
