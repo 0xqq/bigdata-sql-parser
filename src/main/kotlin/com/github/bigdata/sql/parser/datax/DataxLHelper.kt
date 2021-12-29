@@ -62,7 +62,6 @@ object DataxLHelper {
         }else if (writerName.equals(DataxType.Writer.s3.code)){
             val s3Writer = S3Writer(writerName, writer)
             tableSourceWriter = TableSource(s3Writer.connectors,s3Writer.db, s3Writer.table,null,s3Writer.columns)
-
         }
         tableSourceWriter?.let { statementData.outpuTables.add(it) }
 
