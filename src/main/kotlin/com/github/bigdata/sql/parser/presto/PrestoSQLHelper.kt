@@ -1,5 +1,6 @@
 package com.github.bigdata.sql.parser.presto
 
+import cn.hutool.core.collection.CollUtil
 import com.facebook.presto.sql.parser.ParsingOptions
 import com.facebook.presto.sql.parser.SqlParser
 import com.facebook.presto.sql.tree.Insert
@@ -10,7 +11,6 @@ import com.github.bigdata.sql.parser.StatementData
 import com.github.bigdata.sql.parser.StatementType
 import com.github.bigdata.sql.parser.TableData
 import com.github.bigdata.sql.parser.TableSource
-import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang.StringUtils
 
 
@@ -61,7 +61,7 @@ object PrestoSQLHelper {
     }
 
     private fun maxDepthLeaf(treeList: List<Node>, statement:TableData) {
-        if (CollectionUtils.isNotEmpty(treeList)) {
+        if (CollUtil.isNotEmpty(treeList)) {
             for (node in treeList) {
 
                 val children = node.children
@@ -78,7 +78,7 @@ object PrestoSQLHelper {
                     statement.inputTables.add(tableSource(node.name.toString()))
                 }
 
-                if (CollectionUtils.isNotEmpty(children)) {
+                if (CollUtil.isNotEmpty(children)) {
                     maxDepthLeaf(children,statement)
                 }
             }
