@@ -23,4 +23,11 @@ class PrestoSqlParserTest {
         val statementData = PrestoSQLHelper.getStatementData(sql)
         println(statementData.statement)
     }
+
+    @Test
+    fun sql2Test() {
+        val sql = "INSERT INTO a.adc.fsfd with recursive t as (select a,b,v from a.a.x)  select a,b,v from t.t.re"
+        val statementData = PrestoSQLHelper.getStatementData(sql)
+        println(statementData.statement)
+    }
 }

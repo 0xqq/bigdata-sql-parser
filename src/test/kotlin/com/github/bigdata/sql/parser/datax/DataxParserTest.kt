@@ -1,6 +1,7 @@
 package com.github.bigdata.sql.parser.datax
 
 import cn.hutool.json.JSONUtil
+import com.github.bigdata.sql.parser.TableData
 import org.junit.Test
 
 /**
@@ -15,7 +16,17 @@ class DataxParserTest {
     fun run(path:String) {
         val json = readText(path)
         val statementData = DataxLHelper.getStatementData(json)
-        println(JSONUtil.toJsonStr(statementData))
+        val statement = statementData.statement
+
+        val tableData: TableData
+        tableData = if (statement is TableData) {
+            statement
+        } else {
+            throw RuntimeException("血缘无法解析 -> $statement")
+        }
+
+        println(statement)
+        //println(JSONUtil.toJsonStr(statementData))
     }
 
     @Test
