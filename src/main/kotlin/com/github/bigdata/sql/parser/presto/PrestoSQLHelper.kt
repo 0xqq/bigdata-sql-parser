@@ -45,7 +45,7 @@ object PrestoSQLHelper {
         val split = StringUtils.split(str, ".")
         var tableSource: TableSource = when (split.size) {
             2 -> {
-                TableSource("hive",split[0], split[1],null,null)
+                TableSource(split[0], split[1])
             }
             3 -> {
                 TableSource(split[0], split[1], split[2],null,null)
