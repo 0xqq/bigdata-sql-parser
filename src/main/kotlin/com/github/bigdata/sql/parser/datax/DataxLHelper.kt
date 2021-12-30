@@ -47,10 +47,10 @@ object DataxLHelper {
         //拿到reader
         if (readerName.equals(DataxType.Reader.pg.code) || readerName.equals(DataxType.Reader.mysql.code)){
             val dbReader = DBReader(readerName,reader)
-            tableSourceReader = TableSource(dbReader.connectors,dbReader.db, dbReader.table,null,dbReader.columns)
+            tableSourceReader = TableSource(dbReader.connectors,dbReader.db, dbReader.table,null,dbReader.columns,readerName)
         }else if (readerName.equals(DataxType.Reader.s3.code)){
             val s3Reader = S3Reader(readerName,reader)
-            tableSourceReader = TableSource(null,s3Reader.db, s3Reader.table,null,s3Reader.columns)
+            tableSourceReader = TableSource(null,s3Reader.db, s3Reader.table,null,s3Reader.columns,readerName)
         }
         tableSourceReader?.let { statementData.inputTables.add(it) }
 
@@ -58,10 +58,10 @@ object DataxLHelper {
         //拿到writer
         if (writerName.equals(DataxType.Writer.pg.code) || writerName.equals(DataxType.Writer.mysql.code)){
             val dbWriter = DBWriter(writerName, writer)
-            tableSourceWriter = TableSource(dbWriter.connectors,dbWriter.db, dbWriter.table,null,dbWriter.columns)
+            tableSourceWriter = TableSource(dbWriter.connectors,dbWriter.db, dbWriter.table,null,dbWriter.columns,readerName)
         }else if (writerName.equals(DataxType.Writer.s3.code)){
             val s3Writer = S3Writer(writerName, writer)
-            tableSourceWriter = TableSource(s3Writer.connectors,s3Writer.db, s3Writer.table,null,s3Writer.columns)
+            tableSourceWriter = TableSource(s3Writer.connectors,s3Writer.db, s3Writer.table,null,s3Writer.columns,readerName)
         }
         tableSourceWriter?.let { statementData.outpuTables.add(it) }
 
