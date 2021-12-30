@@ -58,10 +58,10 @@ object DataxLHelper {
         //拿到writer
         if (writerName.equals(DataxType.Writer.pg.code) || writerName.equals(DataxType.Writer.mysql.code)){
             val dbWriter = DBWriter(writerName, writer)
-            tableSourceWriter = TableSource(dbWriter.connectors,dbWriter.db, dbWriter.table,null,dbWriter.columns,readerName)
+            tableSourceWriter = TableSource(dbWriter.connectors,dbWriter.db, dbWriter.table,null,dbWriter.columns,writerName)
         }else if (writerName.equals(DataxType.Writer.s3.code)){
             val s3Writer = S3Writer(writerName, writer)
-            tableSourceWriter = TableSource(s3Writer.connectors,s3Writer.db, s3Writer.table,null,s3Writer.columns,readerName)
+            tableSourceWriter = TableSource(s3Writer.connectors,s3Writer.db, s3Writer.table,null,s3Writer.columns,writerName)
         }
         tableSourceWriter?.let { statementData.outpuTables.add(it) }
 
