@@ -29,12 +29,17 @@ class S3Writer {
         val path = writer!!.getStr("path")
         val split = path.split("/").toTypedArray()
         if (split.size < 3) throw RuntimeException("path 无法解析出库和表,path:" + ArrayUtil.toString(split))
-        db = split[1]
-        table = split[2]
-        val column = writer!!.getJSONArray("column")
-        for (i in column.indices) {
-            val name = column.getJSONObject(i).getStr("name")
-            columns.add(name)
+        if (writer!!.containsKey("old")){
+            db = split[2]
+            table = split[3]
+        }else{
+            db = split[1]
+            table = split[2]
+            val column = writer!!.getJSONArray("column")
+            for (i in column.indices) {
+                val name = column.getJSONObject(i).getStr("name")
+                columns.add(name)
+            }
         }
     }
 }
