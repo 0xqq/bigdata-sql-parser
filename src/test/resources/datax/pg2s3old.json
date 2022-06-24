@@ -1,39 +1,43 @@
 {
   "job": {
-    "setting": {
-      "speed": {
-        "channel": 2
-      }
-    },
     "content": [
       {
         "reader": {
-          "name": "postgresqlreader",
           "parameter": {
-            "username": "postgres",
-            "password": "871d1f7908f3f6f1fa28d1509069cb1d",
-            "splitPk": "qw",
+            "password": "/WfxYZ0asdasdsasdB11j4b+asdsadsa=",
             "connection": [
               {
                 "querySql": [
-                  "select a,b,v,cx,z,ss,s,e from test.table_name;"
+                  "select id, content, member_id, created_at, updated_at, status, resolved_at, meta::varchar AS meta, user_id, type, target_id, target_type, sub_type, audit_user_name from tickets where meta -> account_channel = 1"
                 ],
                 "jdbcUrl": [
-                  "jdbc:postgresql://localhost:5432/postgres"
+                  "jdbc:postgresql://sadasadasdsadsadsadsa:5432/lb-support-canary"
                 ]
               }
-            ]
-          }
+            ],
+            "splitPk": "",
+            "username": "c/rEasdsadasd=="
+          },
+          "name": "postgresqlreader"
         },
         "writer": {
-          "name": "s3writer",
           "parameter": {
             "old": true,
             "writeMode": "overwrite",
-            "path": "canary-lb-bi-data-warehouse/ods/stock_info/ipo_hk_subscription/"
-          }
+            "path": "canary-lb-bi-data-warehouse/ods/lb_support/tickets/"
+          },
+          "name": "s3writer"
         }
       }
-    ]
+    ],
+    "setting": {
+      "errorLimit": {
+        "record": 0,
+        "percentage": 0.02
+      },
+      "speed": {
+        "channel": 1
+      }
+    }
   }
 }

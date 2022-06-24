@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject
 import cn.hutool.json.JSONUtil
 import com.github.bigdata.sql.parser.TableData
 import com.github.bigdata.sql.parser.datax.commons.DataxType
+import com.github.bigdata.sql.parser.presto.PrestoSQLHelper
 import com.github.bigdata.sql.parser.tidb.TidbSQLHelper.getStatementData
 import com.github.bigdata.sql.parser.util.SqlParserTool
 
@@ -49,8 +50,8 @@ class DBReader {
     private fun pg(connection: JSONObject) {
         connectors = db
         if (!reader!!.containsKey("column")) {
-            val querySql = connection.getJSONArray("querySql").getStr(0)
-            val statement = getStatementData(querySql).statement
+            val querySql = connection.getJSONArray("querySql").getStr(0).replace(":","")
+            val statement = PrestoSQLHelper.getStatementData(querySql).statement
             val tableData: TableData
             tableData = if (statement is TableData) {
                 statement
@@ -60,7 +61,11 @@ class DBReader {
             val (_, databaseName, tableName) = tableData.inputTables[0]
             db = if (StrUtil.isBlank(databaseName)) "public" else databaseName
             table = tableName
-            columns.addAll(SqlParserTool.getSelectColumnName(querySql))
+            try {
+                columns.addAll(SqlParserTool.getSelectColumnName(querySql))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         } else {
             val table = connection.getJSONArray("table").getStr(0)
             if (!table.contains(".")) {
