@@ -67,10 +67,11 @@ object PrestoSQLHelper {
                 val children = node.children
 
                 if (node is QuerySpecification){
-                    val from = node.from.get()
-                    if(from is Table){
-                        statement.inputTables.add(tableSource(from.name.toString()))
-                        //println("输入表:"+from.name + "----------输入字段:"+node.select.selectItems)
+                    if (node.from.isPresent){
+                        val from = node.from.get()
+                        if(from is Table){
+                            statement.inputTables.add(tableSource(from.name.toString()))
+                        }
                     }
                 }
 
