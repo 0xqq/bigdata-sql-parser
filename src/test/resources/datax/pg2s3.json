@@ -16,7 +16,7 @@
             "connection": [
               {
                 "querySql": [
-                  "select a,b,v,cx,z,ss,s,e from test.table_name;"
+                  "select a,b,v,cx,z,ss,s,e from test.table_name where (meta -> 'account_channel') = '4';"
                 ],
                 "jdbcUrl": [
                   "jdbc:postgresql://localhost:5432/postgres"

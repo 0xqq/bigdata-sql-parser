@@ -50,10 +50,12 @@ class DBReader {
     private fun pg(connection: JSONObject) {
         connectors = db
         if (!reader!!.containsKey("column")) {
-            val querySql = connection.getJSONArray("querySql").getStr(0).replace(":","")
+            var querySql = connection.getJSONArray("querySql").getStr(0).replace(":","")
+            if(querySql.contains("where")){
+                querySql = querySql.split("where")[0]
+            }
             val statement = PrestoSQLHelper.getStatementData(querySql).statement
-            val tableData: TableData
-            tableData = if (statement is TableData) {
+            val tableData: TableData = if (statement is TableData) {
                 statement
             } else {
                 throw RuntimeException("血缘无法解析 -> $statement")
