@@ -463,13 +463,17 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     //-----------------------------------insert & query-------------------------------------------------
 
     override fun visitStatementDefault(ctx: SparkSqlBaseParser.StatementDefaultContext): StatementData? {
-        if(StringUtils.equalsIgnoreCase("select", ctx.start.text)
-            || (!StringUtils.equalsIgnoreCase("insert", ctx.start.text) && StringUtils.equalsIgnoreCase("with", ctx.start.text))) {
+        val select = StringUtils.equalsIgnoreCase("select", ctx.start.text)
+        val insert = StringUtils.equalsIgnoreCase("insert", ctx.start.text)
+        val with = StringUtils.equalsIgnoreCase("with", ctx.start.text)
+        val from = StringUtils.equalsIgnoreCase("from", ctx.start.text)
+
+        if(select || (!insert && with)) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
             statementData.limit = limit
             return StatementData(StatementType.SELECT, statementData)
-        } else if(StringUtils.equalsIgnoreCase("insert", ctx.start.text) && StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
+        } else if(insert && with) {
             super.visitQuery(ctx.query())
 
             val tableContext = ctx.query().queryNoWith().getChild(0)
@@ -490,7 +494,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             } else {
                 return StatementData(StatementType.INSERT_SELECT, statementData)
             }
-        } else if(StringUtils.equalsIgnoreCase("from", ctx.start.text)) {
+        } else if(from) {
             currentOptType = StatementType.MULTI_INSERT
             super.visitQuery(ctx.query())
             return StatementData(StatementType.MULTI_INSERT, statementData)
