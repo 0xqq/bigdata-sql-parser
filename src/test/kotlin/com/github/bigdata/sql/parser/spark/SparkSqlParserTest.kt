@@ -662,7 +662,7 @@ class SparkSqlParserTest {
 
     @Test
     fun sqlTest1() {
-        val sql = readText("/sql/1")
+        val sql = readText("/sql/with_select")
         val statementData = SparkSQLHelper.getStatementData(sql)
         println(statementData.statement)
     }
