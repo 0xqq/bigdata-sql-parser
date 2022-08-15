@@ -468,31 +468,36 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         val with = StringUtils.equalsIgnoreCase("with", ctx.start.text)
         val from = StringUtils.equalsIgnoreCase("from", ctx.start.text)
 
-        if(select || (!insert && with)) {
+        if(select) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
             statementData.limit = limit
             return StatementData(StatementType.SELECT, statementData)
-        } else if(insert && with) {
+        } else if(insert || with) {
             super.visitQuery(ctx.query())
 
+            var insertTableIdentifier:Boolean = true
             val tableContext = ctx.query().queryNoWith().getChild(0)
-            val tableIdentifier: SparkSqlBaseParser.TableIdentifierContext
-                    = if(tableContext is SparkSqlBaseParser.InsertIntoTableContext) {
+            val tableIdentifier: SparkSqlBaseParser.TableIdentifierContext? = if(tableContext is SparkSqlBaseParser.InsertIntoTableContext) {
                 tableContext.tableIdentifier()
-            } else {
-                (tableContext as SparkSqlBaseParser.InsertOverwriteTableContext).tableIdentifier()
+            } else if (tableContext is SparkSqlBaseParser.InsertOverwriteTableContext){
+                tableContext.tableIdentifier()
+            }else{
+                insertTableIdentifier = false
+                null
             }
 
-            val databaseName = tableIdentifier.db?.text
-            val tableName = tableIdentifier.table.text
-            val tableSource = TableSource(databaseName, tableName)
-            statementData.outpuTables.add(tableSource)
+            if (insertTableIdentifier && tableIdentifier != null) {
+                val databaseName = tableIdentifier.db?.text
+                val tableName = tableIdentifier.table.text
+                val tableSource = TableSource(databaseName, tableName)
+                statementData.outpuTables.add(tableSource)
+            }
 
-            if(currentOptType == StatementType.INSERT_VALUES) {
-                return StatementData(StatementType.INSERT_VALUES, statementData)
+            return if(currentOptType == StatementType.INSERT_VALUES) {
+                StatementData(StatementType.INSERT_VALUES, statementData)
             } else {
-                return StatementData(StatementType.INSERT_SELECT, statementData)
+                StatementData(StatementType.INSERT_SELECT, statementData)
             }
         } else if(from) {
             currentOptType = StatementType.MULTI_INSERT
