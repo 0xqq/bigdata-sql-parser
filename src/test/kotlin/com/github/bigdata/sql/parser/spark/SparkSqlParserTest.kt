@@ -1,6 +1,8 @@
 package com.github.bigdata.sql.parser.spark
 
 import com.github.bigdata.sql.parser.*
+import com.github.bigdata.sql.parser.datax.DataxParserTest
+import com.github.bigdata.sql.parser.presto.PrestoSQLHelper
 import org.junit.Assert
 import org.junit.Test
 
@@ -656,6 +658,14 @@ class SparkSqlParserTest {
         Assert.assertEquals(StatementType.SET, statementData.type)
     }
 
+    fun readText(path:String): String = DataxParserTest::class.java.getResource(path).readText()
+
+    @Test
+    fun sqlTest1() {
+        val sql = readText("/sql/1")
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        println(statementData.statement)
+    }
 
     @Test
     fun sql() {
