@@ -12,6 +12,7 @@ import cn.hutool.json.JSONObject
 class S3Reader {
     private var name: String? = null
     private var reader: JSONObject? = null
+    var connectors: String? = null
     var db: String? = null
     var table: String? = null
     var columns: MutableList<String> = ArrayList()
@@ -41,5 +42,6 @@ class S3Reader {
             if (column.containsKey("name"))
                 this.columns.add(column.getStr("name"))
         }
+        connectors = "hive"
     }
 }

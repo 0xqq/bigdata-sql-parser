@@ -50,7 +50,8 @@ object DataxLHelper {
             tableSourceReader = TableSource(dbReader.connectors,dbReader.db, dbReader.table,null,dbReader.columns,readerName)
         }else if (readerName.equals(DataxType.Reader.s3.code)){
             val s3Reader = S3Reader(readerName,reader)
-            tableSourceReader = TableSource(null,s3Reader.db, s3Reader.table,null,s3Reader.columns,readerName)
+            tableSourceReader =
+                TableSource(s3Reader.connectors, s3Reader.db, s3Reader.table, null, s3Reader.columns, readerName)
         }
         tableSourceReader?.let { statementData.inputTables.add(it) }
 
