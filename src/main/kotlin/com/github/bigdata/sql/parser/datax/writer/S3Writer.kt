@@ -30,16 +30,27 @@ class S3Writer {
         val split = path.split("/").toTypedArray()
         if (split.size < 3) throw RuntimeException("path 无法解析出库和表,path:" + ArrayUtil.toString(split))
         if (writer!!.containsKey("old")){
-            db = split[2]
-            table = split[3]
-        }else{
-            db = split[1]
-            table = split[2]
+            if (path.contains("/account/")) {
+                db = split[4]
+                table = split[5]
+            } else {
+                db = split[2]
+                table = split[3]
+            }
+        }else {
+            if (path.startsWith("account/")) {
+                db = split[3]
+                table = split[4]
+            } else {
+                db = split[1]
+                table = split[2]
+            }
             val column = writer!!.getJSONArray("column")
             for (i in column.indices) {
                 val name = column.getJSONObject(i).getStr("name")
                 columns.add(name)
             }
         }
+        connectors = "hive"
     }
 }

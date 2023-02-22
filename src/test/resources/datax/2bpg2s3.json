@@ -1,0 +1,79 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "parameter": {
+            "column": [
+              "\"id\"",
+              "\"created_at\"",
+              "\"updated_at\"",
+              "\"account_channel\"",
+              "\"aaid\"",
+              "\"member_id\"",
+              "\"origin_id\"",
+              "\"company_channel\"",
+              "\"counter_id\"",
+              "\"pcounter_id\"",
+              "\"fund_name\"",
+              "\"action\"",
+              "\"nav\"",
+              "\"currency\"",
+              "\"apply_amount\"",
+              "\"apply_shares\"",
+              "\"confirmed_amount\"",
+              "\"confirmed_shares\"",
+              "\"settlement_no\"",
+              "\"state\"",
+              "\"sync_state\"",
+              "\"time_partition\"",
+              "\"submit_at\"",
+              "\"confirm_at\"",
+              "\"settle_at\"",
+              "\"cancel_at\"",
+              "\"trade_source\"",
+              "\"fee\"",
+              "\"ob_channel\"",
+              "\"remark\"",
+              "\"asset_class\"",
+              "\"isin\"",
+              "\"sync_at\""
+            ],
+            "password": "B2222222222222222Rs=",
+            "connection": [
+              {
+                "jdbcUrl": [
+                  "jdbc:postgresql://333333333333333:5432/lb-utservice-canary"
+                ],
+                "table": [
+                  "saas_orders"
+                ]
+              }
+            ],
+            "splitPk": "",
+            "username": "=B2222222222222222Rs="
+          },
+          "name": "postgresqlreader"
+        },
+        "writer": {
+          "parameter": {
+            "old": true,
+            "writeMode": "overwrite",
+            "path": "canary-lb-bi-data-warehouse/account/longport/ods/longport_lb_utservice_canary/saas_orders/"
+          },
+          "name": "s3writer"
+        }
+      }
+    ],
+    "setting": {
+      "errorLimit": {
+        "record": 0,
+        "percentage": 0.02
+      },
+      "speed": {
+        "byte": 1048576,
+        "channel": 1
+      }
+    }
+  }
+}

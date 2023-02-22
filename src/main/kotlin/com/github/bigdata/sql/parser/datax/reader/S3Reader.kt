@@ -28,8 +28,13 @@ class S3Reader {
         val path = reader!!.getJSONArray("path").getStr(0)
         val split = path.split("/").toTypedArray()
         if (split.size < 3) throw RuntimeException("path 无法解析出库和表,path:" + ArrayUtil.toString(split))
-        db = split[1]
-        table = split[2]
+        if (path.startsWith("account/")) {
+            db = split[3]
+            table = split[4]
+        } else {
+            db = split[1]
+            table = split[2]
+        }
         val columns = reader!!.getJSONArray("column")
         for (i in columns.indices) {
             val column = columns.getJSONObject(i)

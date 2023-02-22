@@ -1,6 +1,5 @@
 package com.github.bigdata.sql.parser.datax
 
-import cn.hutool.json.JSONUtil
 import com.github.bigdata.sql.parser.TableData
 import org.junit.Test
 
@@ -37,7 +36,7 @@ class DataxParserTest {
         run("/datax/mysql2s3_1.json")
         run("/datax/s32mysql.json")
         run("/datax/s32pg.json")*/
-        run("/datax/pg2s3old.json")
+        run("/datax/2bs32pg.json")
 
     }
 }

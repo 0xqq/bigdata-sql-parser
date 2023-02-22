@@ -1,0 +1,247 @@
+{
+  "variable": {
+    "variable": {
+    },
+    "configuration": {
+      "special": {
+      },
+      "runtime": {
+      },
+      "startup": {
+      }
+    }
+  },
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "parameter": {
+            "datax_web": "true",
+            "password": "f/sssssssssssssssss+sssssssssssssssss+sssssssssssssssss=",
+            "connection": [
+              {
+                "querySql": [
+                  "SELECT id, aaid, en_name, real_name, address, email, account_type, account_no, member_id, support_manager_name, support_manager_id, org_id, state, phone_number, statement_send, account_channel, lang, card_type, card_id, card_country, beneficiary_name, broker_name, broker_code, client_type, tax_id, tax_country, first_name, last_name, region, birth_date, location, credit_limit, open_date, occupation, close_date, country_code, us_stock_ac_long, us_stock_ac_short, us_option_ac_lc_sp, us_option_ac_sc_lp, gender, pi, company_email, client_detail_type, account_name, mark, joint_en_name FROM ods_account_infos"
+                ],
+                "jdbcUrl": [
+                  "jdbc:postgresql://sssssssssssssssss:5432/clearing"
+                ]
+              }
+            ],
+            "username": "sssssssssssssssss=="
+          },
+          "name": "postgresqlreader"
+        },
+        "writer": {
+          "parameter": {
+            "column": [
+              {
+                "type": "bigint",
+                "name": "id"
+              },
+              {
+                "type": "bigint",
+                "name": "ledger_date"
+              },
+              {
+                "type": "bigint",
+                "name": "aaid"
+              },
+              {
+                "type": "string",
+                "name": "en_name"
+              },
+              {
+                "type": "string",
+                "name": "real_name"
+              },
+              {
+                "type": "string",
+                "name": "address"
+              },
+              {
+                "type": "string",
+                "name": "email"
+              },
+              {
+                "type": "string",
+                "name": "account_type"
+              },
+              {
+                "type": "string",
+                "name": "account_no"
+              },
+              {
+                "type": "bigint",
+                "name": "member_id"
+              },
+              {
+                "type": "string",
+                "name": "support_manager_name"
+              },
+              {
+                "type": "string",
+                "name": "support_manager_id"
+              },
+              {
+                "type": "bigint",
+                "name": "org_id"
+              },
+              {
+                "type": "bigint",
+                "name": "state"
+              },
+              {
+                "type": "string",
+                "name": "phone_number"
+              },
+              {
+                "type": "string",
+                "name": "statement_send"
+              },
+              {
+                "type": "string",
+                "name": "account_channel"
+              },
+              {
+                "type": "string",
+                "name": "lang"
+              },
+              {
+                "type": "bigint",
+                "name": "card_type"
+              },
+              {
+                "type": "string",
+                "name": "card_id"
+              },
+              {
+                "type": "string",
+                "name": "card_country"
+              },
+              {
+                "type": "string",
+                "name": "beneficiary_name"
+              },
+              {
+                "type": "string",
+                "name": "broker_name"
+              },
+              {
+                "type": "string",
+                "name": "broker_code"
+              },
+              {
+                "type": "bigint",
+                "name": "client_type"
+              },
+              {
+                "type": "string",
+                "name": "tax_id"
+              },
+              {
+                "type": "string",
+                "name": "tax_country"
+              },
+              {
+                "type": "string",
+                "name": "first_name"
+              },
+              {
+                "type": "string",
+                "name": "last_name"
+              },
+              {
+                "type": "string",
+                "name": "region"
+              },
+              {
+                "type": "bigint",
+                "name": "birth_date"
+              },
+              {
+                "type": "string",
+                "name": "location"
+              },
+              {
+                "type": "decimal(20,10)",
+                "name": "credit_limit"
+              },
+              {
+                "type": "string",
+                "name": "open_date"
+              },
+              {
+                "type": "string",
+                "name": "occupation"
+              },
+              {
+                "type": "bigint",
+                "name": "close_date"
+              },
+              {
+                "type": "string",
+                "name": "country_code"
+              },
+              {
+                "type": "string",
+                "name": "us_stock_ac_long"
+              },
+              {
+                "type": "string",
+                "name": "us_stock_ac_short"
+              },
+              {
+                "type": "string",
+                "name": "us_option_ac_lc_sp"
+              },
+              {
+                "type": "string",
+                "name": "us_option_ac_sc_lp"
+              },
+              {
+                "type": "bigint",
+                "name": "gender"
+              },
+              {
+                "type": "bigint",
+                "name": "pi"
+              },
+              {
+                "type": "string",
+                "name": "company_email"
+              },
+              {
+                "type": "string",
+                "name": "client_detail_type"
+              },
+              {
+                "type": "string",
+                "name": "account_name"
+              },
+              {
+                "type": "string",
+                "name": "mark"
+              },
+              {
+                "type": "string",
+                "name": "joint_en_name"
+              }
+            ],
+            "writeMode": "truncate",
+            "bucket": "canary-lb-bi-data-warehouse",
+            "path": "account/lb/ads/lb_portfolio_backbone/archive_ods_account_infos/pt=20230220",
+            "stored": "PARQUET",
+            "compression": "SNAPPY"
+          },
+          "name": "s3writer"
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": "3"
+      }
+    }
+  }
+}

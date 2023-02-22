@@ -1,0 +1,120 @@
+{
+  "variable": {
+    "configuration": {
+      "runtime": {
+      },
+      "special": {
+      },
+      "startup": {
+      }
+    },
+    "variable": {
+    }
+  },
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "parameter": {
+            "column": [
+              {
+                "index": "0",
+                "type": "date"
+              },
+              {
+                "index": "1",
+                "type": "bigint"
+              },
+              {
+                "index": "2",
+                "type": "string"
+              },
+              {
+                "index": "3",
+                "type": "string"
+              },
+              {
+                "index": "4",
+                "type": "string"
+              },
+              {
+                "index": "5",
+                "type": "decimal(24, 9)"
+              },
+              {
+                "index": "6",
+                "type": "decimal(24, 9)"
+              },
+              {
+                "index": "7",
+                "type": "decimal(24, 9)"
+              },
+              {
+                "index": "8",
+                "type": "bigint"
+              },
+              {
+                "index": "9",
+                "type": "string"
+              },
+              {
+                "index": "10",
+                "type": "string"
+              },
+              {
+                "constant": "hk_zundiao",
+                "index": "11",
+                "type": "string"
+              }
+            ],
+            "bucket": "lb-bi-data-warehouse",
+            "path": [
+              "account/hk_zundiao/ads/hk_zundiao_lb_bi_finance/ads_user_stock_invest_costs/account_channel=hk_zundiao/pt=20230222/"
+            ],
+            "stored": "parquet",
+            "compression": "NONE"
+          },
+          "name": "s3reader"
+        },
+        "writer": {
+          "parameter": {
+            "column": [
+              "dt",
+              "member_id",
+              "counter_id",
+              "market",
+              "currency",
+              "holding_quantity",
+              "buy_avg_cost",
+              "diluted_avg_cost",
+              "aaid",
+              "security_type",
+              "position_side",
+              "account_channel"
+            ],
+            "datax_web": "true",
+            "password": "kOo3242ewrewszPc=",
+            "connection": [
+              {
+                "jdbcUrl": "jdbc:postgresql://3242ewrewsz:5432/portfolio_datadriver__hk_zundiao",
+                "table": [
+                  "public.user_stock_invest_costs"
+                ]
+              }
+            ],
+            "username": "3242ewrewsz=",
+            "preSql": [
+              "delete from public.user_stock_invest_costs where dt = '2023-02-21' and account_channel = 'hk_zundiao'"
+            ]
+          },
+          "name": "postgresqlwriter"
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": "1"
+      }
+    }
+  }
+}
