@@ -22,7 +22,7 @@
                   "table"
                 ],
                 "jdbcUrl": [
-                  "jdbc:postgresql://host:port/database"
+                  "jdbc:mysql://host:port/database"
                 ]
               }
             ]

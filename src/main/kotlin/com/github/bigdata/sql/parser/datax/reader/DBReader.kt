@@ -34,7 +34,7 @@ class DBReader {
     private fun init() {
         val connection = reader!!.getJSONArray("connection").getJSONObject(0)
         var jdbcUrl = connection.getJSONArray("jdbcUrl").getStr(0)
-        if (jdbcUrl.contains("?")){
+        if (jdbcUrl.contains("?")) {
             jdbcUrl = jdbcUrl.split("?")[0]
         }
         val split = jdbcUrl.split("/").toTypedArray()
@@ -43,6 +43,9 @@ class DBReader {
             pg(connection)
         } else {
             db(connection)
+        }
+        if (DataxType.Reader.mysql.code == name && StrUtil.isBlank(connectors)) {
+            connectors = "mysql"
         }
     }
 

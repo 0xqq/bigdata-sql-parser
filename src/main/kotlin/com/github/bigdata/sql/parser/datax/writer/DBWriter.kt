@@ -1,5 +1,6 @@
 package com.github.bigdata.sql.parser.datax.writer
 
+import cn.hutool.core.util.StrUtil
 import cn.hutool.json.JSONObject
 import cn.hutool.json.JSONUtil
 import com.github.bigdata.sql.parser.datax.commons.DataxType
@@ -48,6 +49,9 @@ class DBWriter {
                 db = tables[0]
                 this.table = tables[1]
             }
+        }
+        if (DataxType.Writer.mysql.code == name && StrUtil.isBlank(connectors)) {
+            connectors = "mysql"
         }
         val column = writer!!.getJSONArray("column")
         columns.addAll(JSONUtil.toList(column, String::class.java))
