@@ -33,11 +33,10 @@ class DataxParserTest {
         /*        run("/datax/pg2s3.json")
                 run("/datax/pg2s3_1.json")
                 run("/datax/mysql2s3.json")
-                run("/datax/mysql2s3_1.json")
+
                 run("/datax/s32mysql.json")
                 run("/datax/s32pg.json")*/
-        run("/datax/pg2s3_1.json")
-        run("/datax/mysql2s3_1.json")
+        run("/datax/pg2s3.json")
 
     }
 }
