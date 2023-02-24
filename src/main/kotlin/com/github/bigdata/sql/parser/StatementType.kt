@@ -96,6 +96,7 @@ enum class StatementType: Serializable {
 
     DATAX,
     PRESTO,
+    PG,
 
     UNKOWN;
 }

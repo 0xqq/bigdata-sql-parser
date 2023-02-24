@@ -30,7 +30,7 @@ class S3Writer {
         val split = path.split("/").toTypedArray()
         if (split.size < 3) throw RuntimeException("path 无法解析出库和表,path:" + ArrayUtil.toString(split))
         if (writer!!.containsKey("old")){
-            if (path.contains("/account/")) {
+            if (path.contains("/account/") && split.size >= 6) {
                 db = split[4]
                 table = split[5]
             } else {

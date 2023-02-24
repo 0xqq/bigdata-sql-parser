@@ -5,7 +5,7 @@ import cn.hutool.json.JSONObject
 import cn.hutool.json.JSONUtil
 import com.github.bigdata.sql.parser.TableData
 import com.github.bigdata.sql.parser.datax.commons.DataxType
-import com.github.bigdata.sql.parser.presto.PrestoSQLHelper
+import com.github.bigdata.sql.parser.pg.PostgreSQLHelper
 import com.github.bigdata.sql.parser.tidb.TidbSQLHelper.getStatementData
 import com.github.bigdata.sql.parser.util.SqlParserTool
 
@@ -53,24 +53,17 @@ class DBReader {
     private fun pg(connection: JSONObject) {
         connectors = db
         if (!reader!!.containsKey("column") || connection.containsKey("querySql")) {
-            var querySql = connection.getJSONArray("querySql").getStr(0).replace(":", "")
-            if (querySql.contains("where")) {
-                querySql = querySql.split("where")[0]
-            }
-            val statement = PrestoSQLHelper.getStatementData(querySql).statement
+            var querySql = connection.getJSONArray("querySql").getStr(0)
+            val statement = PostgreSQLHelper().parseSqlFieldLineage(querySql).getStatementData().statement
             val tableData: TableData = if (statement is TableData) {
                 statement
             } else {
                 throw RuntimeException("血缘无法解析 -> $statement")
             }
-            val (_, databaseName, tableName) = tableData.inputTables[0]
-            db = if (StrUtil.isBlank(databaseName)) "public" else databaseName
-            table = tableName
-            try {
-                columns.addAll(SqlParserTool.getSelectColumnName(querySql))
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            val tableSource = tableData.inputTables[0]
+            db = if (StrUtil.isBlank(tableSource.databaseName)) "public" else tableSource.databaseName
+            table = tableSource.tableName
+            columns = tableSource.columns as MutableList<String>
         } else {
             val table = connection.getJSONArray("table").getStr(0)
             if (!table.contains(".")) {

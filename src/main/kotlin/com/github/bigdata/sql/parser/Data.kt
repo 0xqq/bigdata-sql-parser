@@ -87,8 +87,16 @@ data class TableSource(
         var columns: List<String>? = ArrayList(),
         var type: String? = null
 ): Statement() {
-    constructor(databaseName: String?,
-                tableName: String): this(null,databaseName, tableName, null, null)
+    constructor(
+        databaseName: String?,
+        tableName: String
+    ) : this(null, databaseName, tableName, null, null)
+
+    constructor(
+        databaseName: String?,
+        tableName: String,
+        columns: List<String>?
+    ) : this(null, databaseName, tableName, null, columns)
 }
 
 data class DcRenameTable(
