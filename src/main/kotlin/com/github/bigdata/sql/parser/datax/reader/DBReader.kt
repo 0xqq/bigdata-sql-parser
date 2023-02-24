@@ -52,9 +52,9 @@ class DBReader {
     @Throws(Exception::class)
     private fun pg(connection: JSONObject) {
         connectors = db
-        if (!reader!!.containsKey("column")) {
-            var querySql = connection.getJSONArray("querySql").getStr(0).replace(":","")
-            if(querySql.contains("where")){
+        if (!reader!!.containsKey("column") || connection.containsKey("querySql")) {
+            var querySql = connection.getJSONArray("querySql").getStr(0).replace(":", "")
+            if (querySql.contains("where")) {
                 querySql = querySql.split("where")[0]
             }
             val statement = PrestoSQLHelper.getStatementData(querySql).statement
