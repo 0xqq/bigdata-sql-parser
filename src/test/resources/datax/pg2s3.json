@@ -1,89 +1,55 @@
 {
-  "job": {
-    "setting": {
-      "speed": {
-        "channel": 2
-      }
-    },
-    "content": [
+  "job":
+  {
+    "content":
+    [
       {
-        "reader": {
-          "name": "postgresqlreader",
-          "parameter": {
-            "username": "postgres",
-            "password": "871d1f7908f3f6f1fa28d1509069cb1d",
-            "splitPk": "qw",
-            "connection": [
+        "reader":
+        {
+          "parameter":
+          {
+            "password": "3243242",
+            "connection":
+            [
               {
-                "querySql": [
-                  "select a,b,v,cx,z,ss,s,e from test.table_name where (meta -> 'account_channel') = '4';"
+                "querySql":
+                [
+                  "SELECT id,member_id,card_id,origin,origin_id,uuid,account_type,mmf,state,created_at,updated_at,card_type,activated_at,deleted_at,privileges,financing,display_id,deposit,disable,forbidden_markets::varchar as forbidden_markets,trade,aaid  FROM accounts where origin = 'lb'"
                 ],
-                "jdbcUrl": [
-                  "jdbc:postgresql://localhost:5432/postgres"
+                "jdbcUrl":
+                [
+                  "jdbc:postgresql://2342432423:5432/lb-member-service"
                 ]
               }
-            ]
-          }
+            ],
+            "splitPk": "",
+            "username": "member"
+          },
+          "name": "postgresqlreader"
         },
-        "writer": {
-          "name": "s3writer",
-          "parameter": {
-            "bucket": "bitestduhanmin",
-            "path": "ods/flinkx/ww/pt=20200508/",
-            "fieldDelimiter": ",",
-            "compression":"SNAPPY",
-            "stored":"PARQUET",
-            "writeMode": "truncate",
-            "column":[
-              {
-                "name": "qw",
-                "type": "bigint"
-              },
-              {
-                "name": "qwqw",
-                "type": "bigint"
-              },
-              {
-                "name": "a",
-                "type": "string"
-              },
-              {
-                "name": "b",
-                "type": "string"
-              },
-              {
-                "name": "column_5",
-                "type": "decimal(10,2)"
-              }
-            ,
-              {
-                "name": "column_6",
-                "type": "decimal(10,4)"
-              }
-            ,
-              {
-                "name": "column_7",
-                "type": "string"
-              }
-            ,
-              {
-                "name": "column_8",
-                "type": "bigint"
-              }
-            ,
-              {
-                "name": "column_9",
-                "type": "bigint"
-              }
-            ,
-              {
-                "name": "column_10",
-                "type": "boolean"
-              }
-            ]
-          }
+        "writer":
+        {
+          "parameter":
+          {
+            "path": "canar3243242/ods/lb_member_service/accounts/",
+            "old": "true",
+            "writeMode": "overwrite"
+          },
+          "name": "s3writer"
         }
       }
-    ]
+    ],
+    "setting":
+    {
+      "errorLimit":
+      {
+        "record": "0",
+        "percentage": "0.02"
+      },
+      "speed":
+      {
+        "channel": "1"
+      }
+    }
   }
 }

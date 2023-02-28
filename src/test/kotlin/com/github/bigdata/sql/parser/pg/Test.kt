@@ -6,12 +6,9 @@ class Test {
 
     @Test
     fun setConfigTest1() {
-        val sql =
-            "select id,code,pcode,counter_id,pcounter_id,product,name,name_locales::varchar as name_locales,company_name,company_name_locales::varchar as company_name_locales,profile,profile_locales::varchar as profile_locales,market,sip_status," +
-                    "level,factset_product,factset_industry_code,isin,fds_md5,created_at,updated_at,fds_tr,ice_tr,ice_product,visible,exchange,locale_status," +
-                    "plevel,currency,status,etf_type,jy_inner_code,jy_company_code,industry_id,intro::varchar as intro,rbics_l4_industry_id," +
-                    "rbics_l4_secondary_industry_id,rbics_l3_industry_id,transaction_currency,security_code,factset_entity_id," +
-                    "short_sell,intro->>'zh-CN' as intro_zh_cn from asdsadsa.securities"
-
+        println("---------------")
+        var querySql =  "select id,created_at,updated_at,counter_id,trade_day ,open,high,low,close,turnover,volume,suspension_indicator from quote_eod_private where trade_day = to_char(current_date - interval '1 day','YYYY-MM-DD') and CURRENT_DATE > date(trade_day) union select id,created_at,updated_at,counter_id,trade_day,open,high,low,close,turnover,volume,suspension_indicator from (select *,rank() over(partition by counter_id order by trade_day desc) as rownum from quote_eod_private where CURRENT_DATE > date(trade_day))t where rownum=1 "
+        var statement = PostgreSQLHelper().parseSqlFieldLineage(querySql).getStatementData().statement
+        println(statement)
     }
 }

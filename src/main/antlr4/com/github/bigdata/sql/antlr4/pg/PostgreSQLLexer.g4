@@ -237,7 +237,7 @@ DESTRUCTOR                           : D E S T R U C T O R;
 DETERMINISTIC                        : D E T E R M I N I S T I C;
 DIAGNOSTICS                          : D I A G N O S T I C S;
 DICTIONARY                           : D I C T I O N A R Y;
-DISABLE                              : D I S A B L E;
+DISABLE_P                              : D I S A B L E;
 DISABLE_PAGE_SKIPPING                : D I S A B L E '_' P A G E '_' S K I P P I N G;
 DISCARD                              : D I S C A R D;
 DISCONNECT                           : D I S C O N N E C T;
@@ -749,7 +749,6 @@ SORTOP                               : S O R T O P;
 PARALLEL                             : P A R A L L E L;
 HYPOTHETICAL                         : H Y P O T H E T I C A L;
 SAFE                                 : S A F E;
-RESTRICTED                           : R E S T R I C T E D;
 UNSAFE                               : U N S A F E;
 BASETYPE                             : B A S E T Y P E;
 

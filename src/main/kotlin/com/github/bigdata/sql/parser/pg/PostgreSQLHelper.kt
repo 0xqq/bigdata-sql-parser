@@ -1,9 +1,11 @@
 package com.github.bigdata.sql.parser.pg
 
 import cn.hutool.core.collection.CollUtil
+import cn.hutool.core.util.StrUtil
 import com.github.bigdata.sql.antlr4.pg.PostgreSQLLexer
 import com.github.bigdata.sql.antlr4.pg.PostgreSQLParser
 import com.github.bigdata.sql.antlr4.pg.PostgreSQLParser.ExprContext
+import com.github.bigdata.sql.antlr4.pg.PostgreSQLParser.From_clauseContext
 import com.github.bigdata.sql.antlr4.pg.PostgreSQLParser.Select_stmtContext
 import com.github.bigdata.sql.antlr4.pg.PostgreSQLParserBaseVisitor
 import com.github.bigdata.sql.parser.StatementData
@@ -23,17 +25,21 @@ class PostgreSQLHelper : PostgreSQLParserBaseVisitor<Any?>() {
     private val statementData = TableData()
 
     override fun visitSelect_stmt(ctx: Select_stmtContext): Any? {
-        val fromItemcontext = ctx.from_clause().from_item().get(0)
-        val dbTable = fromItemcontext.text.split(".")
+        val fromClause = ctx.from_clause()
         var databaseName = "public"
         var tableName = ""
-        if (dbTable.size == 1) {
-            tableName = dbTable.get(0)
-        } else {
-            databaseName = dbTable.get(0)
-            tableName = dbTable.get(1)
+        when (fromClause) {
+            is From_clauseContext -> {
+                val fromItemcontext = ctx.from_clause().from_item().get(0)
+                val dbTable = fromItemcontext.text.split(".")
+                if (dbTable.size == 1) {
+                    tableName = dbTable.get(0)
+                } else {
+                    databaseName = dbTable.get(0)
+                    tableName = dbTable.get(1)
+                }
+            }
         }
-
         val columns: MutableList<String> = CollUtil.newArrayList()
         ctx.selector_clause().column_list().expr().forEach(Consumer { exprContext: ExprContext ->
             exprContext.identifier().forEach(
@@ -41,8 +47,12 @@ class PostgreSQLHelper : PostgreSQLParserBaseVisitor<Any?>() {
                     columns.add(identifierContext.ruleContext.text)
                 })
         })
-        var tableSource = TableSource(databaseName, tableName, columns)
-        this.statementData.inputTables.add(tableSource)
+
+        if (StrUtil.isNotBlank(tableName)){
+            var tableSource = TableSource(databaseName, tableName, columns)
+            this.statementData.inputTables.add(tableSource)
+        }
+
         return super.visitSelect_stmt(ctx)
     }
 

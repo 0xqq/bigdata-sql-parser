@@ -173,7 +173,7 @@ alter_domain_stmt
     ;
 
 alter_event_trigger_stmt
-    : ALTER EVENT TRIGGER name=identifier DISABLE
+    : ALTER EVENT TRIGGER name=identifier DISABLE_P
     | ALTER EVENT TRIGGER name=identifier ENABLE (REPLICA|ALWAYS)?
     | ALTER EVENT TRIGGER name=identifier OWNER TO (new_owner=identifier|CURRENT_USER|SESSION_USER)
     | ALTER EVENT TRIGGER name=identifier RENAME TO new_name=identifier
@@ -204,7 +204,7 @@ alter_foreign_table_action
     | ADD table_constraint (NOT VALID)?
     | VALIDATE CONSTRAINT constraint_name=todo_fill_in
     | DROP CONSTRAINT (IF EXISTS)? constraint_name=todo_fill_in (RESTRICT|CASCADE)?
-    | DISABLE TRIGGER (trigger_name=todo_fill_in|ALL|USER)?
+    | DISABLE_P TRIGGER (trigger_name=todo_fill_in|ALL|USER)?
     | ENABLE TRIGGER (trigger_name=todo_fill_in|ALL|USER)?
     | ENABLE REPLICA TRIGGER trigger_name=todo_fill_in
     | ENABLE ALWAYS TRIGGER trigger_name=todo_fill_in
@@ -346,7 +346,7 @@ alter_subscription_stmt
         (WITH OPEN_PAREN option_list CLOSE_PAREN)?
     | ALTER SUBSCRIPTION name=identifier REFRESH PUBLICATION (WITH OPEN_PAREN option_list CLOSE_PAREN)?
     | ALTER SUBSCRIPTION name=identifier ENABLE
-    | ALTER SUBSCRIPTION name=identifier DISABLE
+    | ALTER SUBSCRIPTION name=identifier DISABLE_P
     | ALTER SUBSCRIPTION name=identifier SET OPEN_PAREN option_list CLOSE_PAREN
     | ALTER SUBSCRIPTION name=identifier OWNER TO new_owner=role_name
     | ALTER SUBSCRIPTION name=identifier RENAME TO new_name=identifier
@@ -514,7 +514,7 @@ create_aggregate_stmt
           (COMMA MFINALFUNC_EXTRA)?
           (COMMA MINITCOND EQUAL identifier)?
           (COMMA SORTOP EQUAL identifier)?
-          (COMMA PARALLEL EQUAL (SAFE | RESTRICTED | UNSAFE))?
+          (COMMA PARALLEL EQUAL (SAFE | UNSAFE))?
         CLOSE_PAREN)
     | (CREATE AGGREGATE name_ OPEN_PAREN ((IN | VARIADIC)? name_? data_type_list)?
          ORDER BY (IN | VARIADIC)? name_? data_type_list CLOSE_PAREN
@@ -525,7 +525,7 @@ create_aggregate_stmt
            (COMMA FINALFUNC EQUAL identifier)?
            (COMMA FINALFUNC_EXTRA)?
            (COMMA INITCOND EQUAL expr)?
-           (COMMA PARALLEL EQUAL (SAFE | RESTRICTED | UNSAFE))?
+           (COMMA PARALLEL EQUAL (SAFE | UNSAFE))?
            (COMMA HYPOTHETICAL)?
          CLOSE_PAREN)
     | (CREATE AGGREGATE name_
@@ -1876,7 +1876,7 @@ non_reserved_keyword
     |  VALIDATOR |  VALUE |  VALUES |  VARCHAR |  VARYING
     |  VAR_POP |  VAR_SAMP |  VIEW |  VOLATILE |  WHENEVER
     |  WHITESPACE |  WIDTH_BUCKET |  WITHIN |  WITHOUT |  WORK
-    |  WRITE |  YEAR |  ZONE
+    |  WRITE |  YEAR |  ZONE |  DISABLE_P
     ;
 
 identifier
