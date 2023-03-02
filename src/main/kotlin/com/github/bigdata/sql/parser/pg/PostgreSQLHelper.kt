@@ -30,13 +30,13 @@ class PostgreSQLHelper : PostgreSQLParserBaseVisitor<Any?>() {
         var tableName = ""
         when (fromClause) {
             is From_clauseContext -> {
-                val fromItemcontext = ctx.from_clause().from_item().get(0)
+                val fromItemcontext = ctx.from_clause().from_item()[0]
                 val dbTable = fromItemcontext.text.split(".")
                 if (dbTable.size == 1) {
-                    tableName = dbTable.get(0)
+                    tableName = dbTable[0]
                 } else {
-                    databaseName = dbTable.get(0)
-                    tableName = dbTable.get(1)
+                    databaseName = dbTable[0]
+                    tableName = dbTable[1]
                 }
             }
         }
