@@ -1,6 +1,6 @@
 # 介绍
 
-数据血缘，支持spark sql,presto sql,tidb sql, flink sql, Spark/flink jar 运行命令的血缘解析
+数据血缘，支持spark sql,hive sql,pg sql,presto sql,mysql sql,tidb sql, flink sql, datax血缘,Spark/flink jar 运行命令的血缘解析；支持with语法
 
 * 特别提示：presto和spark均支持with语法
 * 目前解析到表级别，可以扩展到字段级别
