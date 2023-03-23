@@ -101,15 +101,14 @@
 
     <distributionManagement>
         <repository>
-            <id>nexus-releases</id>
-            <name>internal releases</name>
-            <url>http://maven.dev.longbridge-inc.com:8081/nexus/repository/maven-releases/</url>
+            <id>nexus-release</id>
+            <name>project release repository</name>
+            <url>https://maven.dev.longbridge-inc.com/nexus/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus-snapshots</id>
-            <name>internal snapshot</name>
-            <url>http://maven.dev.longbridge-inc.com:8081/nexus/repository/maven-snapshots/</url>
-            <uniqueVersion>false</uniqueVersion>
+            <name>project snapshots repository</name>
+            <url>https://maven.dev.longbridge-inc.com/nexus/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
