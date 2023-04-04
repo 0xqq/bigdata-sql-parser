@@ -1877,6 +1877,7 @@ non_reserved_keyword
     |  VAR_POP |  VAR_SAMP |  VIEW |  VOLATILE |  WHENEVER
     |  WHITESPACE |  WIDTH_BUCKET |  WITHIN |  WITHOUT |  WORK
     |  WRITE |  YEAR |  ZONE |  DISABLE_P | ALIAS | ENABLE | VERSION
+    |  PREFIX
     ;
 
 identifier
