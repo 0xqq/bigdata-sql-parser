@@ -1876,7 +1876,7 @@ non_reserved_keyword
     |  VALIDATOR |  VALUE |  VALUES |  VARCHAR |  VARYING
     |  VAR_POP |  VAR_SAMP |  VIEW |  VOLATILE |  WHENEVER
     |  WHITESPACE |  WIDTH_BUCKET |  WITHIN |  WITHOUT |  WORK
-    |  WRITE |  YEAR |  ZONE |  DISABLE_P | ALIAS | ENABLE
+    |  WRITE |  YEAR |  ZONE |  DISABLE_P | ALIAS | ENABLE | VERSION
     ;
 
 identifier
