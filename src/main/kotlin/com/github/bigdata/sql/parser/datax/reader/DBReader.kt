@@ -81,7 +81,7 @@ class DBReader {
 
     @Throws(Exception::class)
     private fun db(connection: JSONObject) {
-        if (!reader!!.containsKey("column")) {
+        if (connection!!.containsKey("querySql")) {
             val querySql = connection.getJSONArray("querySql").getStr(0)
             val statement = getStatementData(querySql).statement
             val tableData: TableData
