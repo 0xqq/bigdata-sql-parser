@@ -1,0 +1,401 @@
+
+with base_topics as (
+    select
+        a.*
+        ,if(b.topic_id is not null,1,0) as is_excellent
+
+    from  (
+        select
+            a.topic_id
+            ,a.member_id
+            ,a.start_date as created_dt
+            ,a.updated_date
+            ,a.target_type
+            ,case a.topic_type when  1 then '长文' when 0 then '短文' end as topic_type
+            ,if(topic_region not in  ('CN','HK'),'其他',topic_region)  as topic_region
+            ,a.curr_comments_cnt
+            ,a.curr_comment_member_cnt
+            ,a.curr_like_cnt
+            ,a.curr_likes_member_cnt
+            ,a.curr_quote_cnt
+            ,a.curr_share_cnt
+            ,a.curr_quot_member_cnt
+            ,a.curr_share_member_cnt
+            ,counter_id
+            ,tag_id
+
+        from lb_ba_content.dws_community_topic_df a
+        LATERAL VIEW explode(split(substr(tag_ids,2,length(tag_ids) -2),',')) t1 as tag_id
+        LATERAL VIEW explode(split(substr(counter_ids,2,length(counter_ids) -2),',')) t1 as counter_id
+        where pt='20220814'
+
+        and (
+            start_date ='20220814' or
+        updated_date ='20220814'
+        )
+        and topic_type in (0,1)
+        and tag_id !=''
+    )   a
+    left join  (
+
+        select topic_id ,member_id
+        from lb_social.reward_topics
+        where activity_code = 'creator_new_plan' and status = 2
+        ) b on a.topic_id = b.topic_id
+
+)
+,tag as (
+    select
+        a.id,name,container_id,status,unrecommend
+        ,tag_region
+        ,tag_created_dt
+        ,coalesce(c.theme_type,d.theme_type) as theme_type
+        ,a.dt
+    from (
+            select
+                id,name,container_id,status,unrecommend
+                ,substr(regions,2,length(regions) -2) as  tag_region
+                ,date_format(FROM_UNIXTIME(created_at/1000),'yyyy-MM-dd HH:mm:SS') as tag_created_dt
+                ,date_format(FROM_UNIXTIME(created_at/1000),'yyyyMMdd') as dt
+            from lb_social.tags
+            where date_format(FROM_UNIXTIME(created_at/1000),'yyyyMMdd')<='20220814'
+            union
+            select distinct
+                0 id,'全部话题' name,0 container_id,0 status,0 unrecommend
+                ,'ALL' tag_region
+                ,concat('20220814','00:00:00') as tag_created_dt
+                ,'20220814' as dt
+            from lb_social.tags
+
+    ) a
+    left join (select if(item_type = 'Hashtag', 'hash_tag','普通话题') as theme_type,item_id from lb_social.pins) c on a.id = c.item_id
+    left join (select if(item_type = 'Hashtag', 'hash_tag','普通话题') as theme_type,item_id from lb_social.ad_items) d on a.id = d.item_id
+    group by a.id
+        ,name,container_id,status,unrecommend
+        ,tag_region
+        ,tag_created_dt
+        ,coalesce(c.theme_type,d.theme_type)
+        ,a.dt
+)
+,tag_topics (
+        select if(GROUPING(tag_id) = 1,0,tag_id) as tag_id
+            ,if(GROUPING(target_type) = 1,'ALL',target_type) as target_type
+            ,if(GROUPING(topic_type) = 1,'全部',topic_type) as topic_type
+            ,if(GROUPING(topic_region) = 1,'全部地区',topic_region) as topic_region
+            ,count(distinct topic_id) as topics
+            ,count(distinct member_id) as topic_members
+            ,count(distinct if(is_excellent=1,topic_id,null)) as excellent_topics
+            ,count(distinct if(is_excellent=1,member_id,null)) as excellent_topic_members
+            ,max(created_dt) as created_dt
+            ,max(updated_date) as updated_date
+            ,sum(curr_comments_cnt) as curr_comments_cnt
+            ,sum(curr_comment_member_cnt) as curr_comment_member_cnt
+            ,sum(curr_like_cnt) as curr_like_cnt
+            ,sum(curr_likes_member_cnt) as curr_likes_member_cnt
+            ,sum(curr_quote_cnt) as curr_quote_cnt
+            ,sum(curr_share_cnt) as curr_share_cnt
+            ,sum(curr_quot_member_cnt) as curr_quot_member_cnt
+            ,sum(curr_share_member_cnt) as curr_share_member_cnt
+
+        from base_topics
+        group by tag_id
+            ,target_type
+            ,topic_type
+            ,topic_region
+            with rollup
+    )
+,tag_counters as (
+
+        select if(GROUPING(tag_id) = 1,0,tag_id) as tag_id
+            ,if(GROUPING(target_type) = 1,'ALL',target_type) as target_type
+            ,if(GROUPING(topic_type) = 1,'全部',topic_type) as topic_type
+            ,if(GROUPING(topic_region) = 1,'全部地区',topic_region) as topic_region
+            ,count(if(counter_id ='',null,counter_id)) as counters_cnt
+            ,count(distinct if(counter_id ='',null,counter_id)) as counters
+        from base_topics
+        group by tag_id
+        ,target_type
+        ,topic_type
+        ,topic_region
+        with rollup
+)
+
+,sensor_event as (
+    select
+        a.distinct_id
+        ,a.time
+        ,cast(a.target_id  as bigint) as target_id
+        ,a.theme_type
+        ,a.target_name
+        ,duration
+        ,view_cnt
+    from (
+        select  distinct_id
+                ,min(time) as time
+                ,sum(cast(duration as double)) as duration
+                ,count(distinct_id) as view_cnt
+                ,get_json_object(properties,'$.target_id') as target_id
+                ,get_json_object(properties,'$.target_type') as theme_type
+                ,max(get_json_object(properties,'$.target_name')) as target_name
+
+        from lb_bi_event_tracking.lb_bi_event_tracking_sensor_event_d
+        lateral view json_tuple(properties,'$event_duration') as duration
+        where event = 'topic_detail_view'
+        and project = 'production'
+        and duration >2
+        and pt ='20220814'
+        and (get_json_object(properties,'$.target_name') is not null or get_json_object(properties,'$.target_name') <>'')
+        group by distinct_id
+                ,get_json_object(properties,'$.target_id')
+                ,get_json_object(properties,'$.target_type')
+        ) a
+)
+,tags_view as (
+    select
+        target_id
+        ,theme_type
+        ,target_name
+
+        ,sum(view_cnt) as total_view_cnt
+        ,count(distinct distinct_id)  as view_member_cnt
+        ,sum(duration) as view_duration
+    from sensor_event
+    group by target_id
+        ,theme_type
+        ,target_name
+
+)
+,tag_guide_counter as (
+
+
+
+    select
+        if(GROUPING(tag_id) = 1,0,tag_id) as tag_id
+        ,if(GROUPING(target_type) = 1,'ALL',target_type) as target_type
+        ,if(GROUPING(topic_type) = 1,'全部',topic_type) as topic_type
+        ,if(GROUPING(topic_region) = 1,'全部地区',topic_region) as topic_region
+        ,count(member_id) as tag_guide_counters_cnt
+        ,count(distinct member_id) as tag_guide_counter_members
+        ,count(distinct counter_id) as tag_guide_counters
+    from lb_ba_content.dwd_community_tag_guide_di
+    where guide_type='引导关注股票'
+    and pt='20220814'
+    group by tag_id
+            ,target_type
+            ,topic_type
+            ,topic_region
+    with rollup
+)
+
+,tag_guide_trade as (
+
+
+
+    select
+        if(GROUPING(tag_id) = 1,0,tag_id) as tag_id
+        ,if(GROUPING(target_type) = 1,'ALL',target_type) as target_type
+        ,if(GROUPING(topic_type) = 1,'全部',topic_type) as topic_type
+        ,if(GROUPING(topic_region) = 1,'全部地区',topic_region) as topic_region
+       ,count(member_id) as tag_guide_trade_cnt
+       ,count(distinct member_id) as tag_guide_trade_members
+       ,count(distinct counter_id) as tag_guide_trade_counters
+    from  lb_ba_content.dwd_community_tag_guide_di
+    where guide_type='引导交易'
+    and pt='20220814'
+    group by tag_id
+       ,target_type
+        ,topic_type
+        ,topic_region
+    with rollup
+)
+
+select
+    a.target_id
+    ,a.tag_name
+    ,a.tag_region
+    ,a.unrecommend
+    ,a.tag_created_dt
+    ,a.theme_type
+    ,a.status
+    ,a.id as tag_id
+    ,b.target_type  as topic_target_type
+    ,b.topic_type as topic_type
+    ,b.topic_region  as topic_region
+    ,b.curr_topic_cnt
+    ,b.curr_topic_members
+    ,b.curr_excellent_topics
+    ,b.curr_excellent_topic_members
+    ,b.curr_comments_cnt
+    ,b.curr_comment_members
+    ,b.curr_like_cnt
+    ,b.curr_likes_members
+    ,b.curr_quote_cnt
+    ,b.curr_quot_members
+    ,b.curr_share_cnt
+    ,b.curr_share_members
+    ,b.counter_cnt
+    ,b.counters
+    ,a.tag_view_cnt
+    ,a.tag_view_members
+    ,b.tag_guide_counters_cnt
+    ,b.tag_guide_counter_members
+    ,b.tag_guide_counters
+    ,b.tag_guide_trade_cnt
+    ,b.tag_guide_trade_members
+    ,b.tag_guide_trade_counters
+    ,a.view_duration
+from (
+    select
+            a.target_id
+            ,b.id
+            ,b.name as tag_name
+            ,b.tag_region
+            ,b.unrecommend
+            ,b.tag_created_dt
+            ,coalesce (b.theme_type,a.theme_type) as theme_type
+            ,b.status
+
+            ,a.total_view_cnt as tag_view_cnt
+            ,a.view_member_cnt as tag_view_members
+            ,a.view_duration
+    from tags_view  a
+    left join tag b on b.container_id = a.target_id
+) a
+left join (
+        select tag_id
+            ,target_type
+            ,topic_type
+            ,topic_region
+            ,sum(if(topics is null,0,topics)) as curr_topic_cnt
+            ,sum(if(topic_members is null,0,topic_members)) as curr_topic_members
+            ,sum(if(excellent_topics is null,0,excellent_topics)) as curr_excellent_topics
+            ,sum(if(excellent_topic_members is null,0,excellent_topic_members)) as curr_excellent_topic_members
+            ,sum(if(curr_comments_cnt is null,0,curr_comments_cnt)) as curr_comments_cnt
+            ,sum(if(curr_comment_member_cnt is null,0,curr_comment_member_cnt)) as curr_comment_members
+            ,sum(if(curr_like_cnt is null,0,curr_like_cnt)) as curr_like_cnt
+            ,sum(if(curr_likes_member_cnt is null,0,curr_likes_member_cnt)) as curr_likes_members
+            ,sum(if(curr_quote_cnt is null,0,curr_quote_cnt)) as curr_quote_cnt
+            ,sum(if(curr_quot_member_cnt is null,0,curr_quot_member_cnt)) as curr_quot_members
+            ,sum(if(curr_share_cnt is null,0,curr_share_cnt)) as curr_share_cnt
+            ,sum(if(curr_share_member_cnt is null,0,curr_share_member_cnt)) as curr_share_members
+            ,sum(if(counters_cnt is null,0,counters_cnt)) as counter_cnt
+            ,sum(if(counters is null,0,counters)) as counters
+            ,sum(if(tag_guide_counters_cnt is null,0,tag_guide_counters_cnt)) as tag_guide_counters_cnt
+            ,sum(if(tag_guide_counter_members is null,0,tag_guide_counter_members)) as tag_guide_counter_members
+            ,sum(if(tag_guide_counters is null,0,tag_guide_counters)) as tag_guide_counters
+            ,sum(if(tag_guide_trade_cnt is null,0,tag_guide_trade_cnt)) as tag_guide_trade_cnt
+            ,sum(if(tag_guide_trade_members is null,0,tag_guide_trade_members)) as tag_guide_trade_members
+            ,sum(if(tag_guide_trade_counters is null,0,tag_guide_trade_counters)) as tag_guide_trade_counters
+        from (
+            select
+               tag_id
+                ,target_type
+                ,topic_type
+                ,topic_region
+                ,topics
+                ,topic_members
+                ,excellent_topics
+                ,excellent_topic_members
+                ,curr_comments_cnt
+                ,curr_comment_member_cnt
+                ,curr_like_cnt
+                ,curr_likes_member_cnt
+                ,curr_quote_cnt
+                ,curr_quot_member_cnt
+                ,curr_share_cnt
+                ,curr_share_member_cnt
+                ,0 counters_cnt
+                ,0 counters
+                ,0 tag_guide_counters_cnt
+                ,0 tag_guide_counter_members
+                ,0 tag_guide_counters
+                ,0 tag_guide_trade_cnt
+                ,0 tag_guide_trade_members
+                ,0 tag_guide_trade_counters
+            from tag_topics
+            union all
+            select
+               tag_id
+                ,target_type
+                ,topic_type
+                ,topic_region
+                ,0 topics
+                ,0 topic_members
+                ,0 excellent_topics
+                ,0 excellent_topic_members
+                ,0 curr_comments_cnt
+                ,0 curr_comment_member_cnt
+                ,0 curr_like_cnt
+                ,0 curr_likes_member_cnt
+                ,0 curr_quote_cnt
+                ,0 curr_quot_member_cnt
+                ,0 curr_share_cnt
+                ,0 curr_share_member_cnt
+                ,counters_cnt
+                ,counters
+                ,0 tag_guide_counters_cnt
+                ,0 tag_guide_counter_members
+                ,0 tag_guide_counters
+                ,0 tag_guide_trade_cnt
+                ,0 tag_guide_trade_members
+                ,0 tag_guide_trade_counters
+            from tag_counters
+            union all
+            select
+               tag_id
+                ,target_type
+                ,topic_type
+                ,topic_region
+                ,0 topics
+                ,0 topic_members
+                ,0 excellent_topics
+                ,0 excellent_topic_members
+                ,0 curr_comments_cnt
+                ,0 curr_comment_member_cnt
+                ,0 curr_like_cnt
+                ,0 curr_likes_member_cnt
+                ,0 curr_quote_cnt
+                ,0 curr_quot_member_cnt
+                ,0 curr_share_cnt
+                ,0 curr_share_member_cnt
+                ,0 counters_cnt
+                ,0 counters
+                ,tag_guide_counters_cnt
+                ,tag_guide_counter_members
+                ,tag_guide_counters
+                ,0 tag_guide_trade_cnt
+                ,0 tag_guide_trade_members
+                ,0 tag_guide_trade_counters
+            from tag_guide_counter
+            union all
+            select
+               tag_id
+                ,target_type
+                ,topic_type
+                ,topic_region
+                ,0 topics
+                ,0 topic_members
+                ,0 excellent_topics
+                ,0 excellent_topic_members
+                ,0 curr_comments_cnt
+                ,0 curr_comment_member_cnt
+                ,0 curr_like_cnt
+                ,0 curr_likes_member_cnt
+                ,0 curr_quote_cnt
+                ,0 curr_quot_member_cnt
+                ,0 curr_share_cnt
+                ,0 curr_share_member_cnt
+                ,0 counters_cnt
+                ,0 counters
+                ,0 tag_guide_counters_cnt
+                ,0 tag_guide_counter_members
+                ,0 tag_guide_counters
+                ,tag_guide_trade_cnt
+                ,tag_guide_trade_members
+                ,tag_guide_trade_counters
+            from tag_guide_trade
+    ) group by tag_id
+            ,target_type
+            ,topic_type
+            ,topic_region
+) b on a.id = b.tag_id

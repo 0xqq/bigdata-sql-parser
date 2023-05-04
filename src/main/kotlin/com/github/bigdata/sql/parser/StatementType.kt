@@ -94,5 +94,9 @@ enum class StatementType: Serializable {
     JOB,
     USE,
 
+    DATAX,
+    PRESTO,
+    PG,
+
     UNKOWN;
 }

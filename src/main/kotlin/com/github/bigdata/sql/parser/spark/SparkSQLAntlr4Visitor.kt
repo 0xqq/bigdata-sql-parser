@@ -463,37 +463,45 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     //-----------------------------------insert & query-------------------------------------------------
 
     override fun visitStatementDefault(ctx: SparkSqlBaseParser.StatementDefaultContext): StatementData? {
-        if(StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
+        val select = StringUtils.equalsIgnoreCase("select", ctx.start.text)
+        val insert = StringUtils.equalsIgnoreCase("insert", ctx.start.text)
+        val with = StringUtils.equalsIgnoreCase("with", ctx.start.text)
+        val from = StringUtils.equalsIgnoreCase("from", ctx.start.text)
+
+        if(select) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
-
             statementData.limit = limit
             return StatementData(StatementType.SELECT, statementData)
-        } else if(StringUtils.equalsIgnoreCase("insert", ctx.start.text)) {
+        } else if(insert || with) {
             super.visitQuery(ctx.query())
 
+            var insertTableIdentifier:Boolean = true
             val tableContext = ctx.query().queryNoWith().getChild(0)
-            val tableIdentifier: SparkSqlBaseParser.TableIdentifierContext
-                    = if(tableContext is SparkSqlBaseParser.InsertIntoTableContext) {
+            val tableIdentifier: SparkSqlBaseParser.TableIdentifierContext? = if(tableContext is SparkSqlBaseParser.InsertIntoTableContext) {
                 tableContext.tableIdentifier()
-            } else {
-                (tableContext as SparkSqlBaseParser.InsertOverwriteTableContext).tableIdentifier()
+            } else if (tableContext is SparkSqlBaseParser.InsertOverwriteTableContext){
+                tableContext.tableIdentifier()
+            }else{
+                insertTableIdentifier = false
+                null
             }
 
-            val databaseName = tableIdentifier.db?.text
-            val tableName = tableIdentifier.table.text
-            val tableSource = TableSource(databaseName, tableName)
-            statementData.outpuTables.add(tableSource)
-
-            if(currentOptType == StatementType.INSERT_VALUES) {
-                return StatementData(StatementType.INSERT_VALUES, statementData)
-            } else {
-                return StatementData(StatementType.INSERT_SELECT, statementData)
+            if (insertTableIdentifier && tableIdentifier != null) {
+                val databaseName = tableIdentifier.db?.text
+                val tableName = tableIdentifier.table.text
+                val tableSource = TableSource(databaseName, tableName)
+                statementData.outpuTables.add(tableSource)
             }
-        } else if(StringUtils.equalsIgnoreCase("from", ctx.start.text)) {
+
+            return if(currentOptType == StatementType.INSERT_VALUES) {
+                StatementData(StatementType.INSERT_VALUES, statementData)
+            } else {
+                StatementData(StatementType.INSERT_SELECT, statementData)
+            }
+        } else if(from) {
             currentOptType = StatementType.MULTI_INSERT
             super.visitQuery(ctx.query())
-
             return StatementData(StatementType.MULTI_INSERT, statementData)
         } else {
             return null

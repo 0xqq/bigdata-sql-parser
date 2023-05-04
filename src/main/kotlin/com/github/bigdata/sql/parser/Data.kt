@@ -80,13 +80,23 @@ data class TableData(
 
 @DefaultConstructor
 data class TableSource(
+        var connectors: String? = null,
         var databaseName: String?,
-        var tableName: String,
+        var tableName: String?,
         var column: DcColumn? = null,
-        var columns: List<String>? = ArrayList()
+        var columns: List<String>? = ArrayList(),
+        var type: String? = null
 ): Statement() {
-    constructor(databaseName: String?,
-                tableName: String): this(databaseName, tableName, null)
+    constructor(
+        databaseName: String?,
+        tableName: String
+    ) : this(null, databaseName, tableName, null, null)
+
+    constructor(
+        databaseName: String?,
+        tableName: String,
+        columns: List<String>?
+    ) : this(null, databaseName, tableName, null, columns)
 }
 
 data class DcRenameTable(
